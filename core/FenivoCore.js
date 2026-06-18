@@ -1,29 +1,38 @@
 /**
  * FenivoCore
  * The framework-agnostic core IP logic.
- * Handles internal state management and event emission.
+ * Handles primary emotional states and secondary expressions.
  */
 export class FenivoCore {
   constructor() {
-    // Defined base states for Phase 1
+    // Primary States (Phase 1)
     this.validStates = ['Curious', 'Excited', 'Thinking', 'Confident'];
-    
-    // Initial default state
     this.currentState = 'Curious'; 
     
+    // Secondary Expressions (Phase 2)
+    this.validExpressions = ['Neutral', 'Smile', 'Frown', 'Wide-Eyed'];
+    this.currentExpression = 'Neutral';
+
     // Array to hold listener callbacks
     this.listeners = [];
   }
 
   /**
-   * Returns the current state.
+   * Returns the primary state.
    */
   getState() {
     return this.currentState;
   }
 
   /**
-   * Updates the internal state if valid, and notifies all listeners.
+   * Returns the secondary expression.
+   */
+  getExpression() {
+    return this.currentExpression;
+  }
+
+  /**
+   * Updates the primary state if valid, and notifies all listeners.
    * @param {string} newState 
    */
   setState(newState) {
@@ -36,17 +45,39 @@ export class FenivoCore {
   }
 
   /**
+   * Updates the secondary expression if valid, and notifies all listeners.
+   * @param {string} newExpression 
+   */
+  setExpression(newExpression) {
+    if (this.validExpressions.includes(newExpression)) {
+      this.currentExpression = newExpression;
+      this.notifyListeners();
+    } else {
+      console.warn(`[FenivoCore] Warning: '${newExpression}' is not a valid expression.`);
+    }
+  }
+
+  /**
    * Allows external modules (like the UI) to subscribe to state changes.
    * @param {function} callback 
    */
   subscribe(callback) {
     this.listeners.push(callback);
+    // Immediately invoke the callback so the UI synchronizes upon subscription
+    callback({
+      state: this.currentState,
+      expression: this.currentExpression
+    });
   }
 
   /**
-   * Triggers all subscribed callbacks with the new state.
+   * Triggers all subscribed callbacks with the complete current profile.
    */
   notifyListeners() {
-    this.listeners.forEach(callback => callback(this.currentState));
+    const payload = {
+      state: this.currentState,
+      expression: this.currentExpression
+    };
+    this.listeners.forEach(callback => callback(payload));
   }
 }

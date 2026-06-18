@@ -3,25 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fenivo - Core State Demo</title>
+    <title>Fenivo - Phase 2 Demo</title>
     <style>
       body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin-top: 50px; }
-      .button-group { margin-top: 20px; }
+      .control-section { margin-top: 20px; text-align: center; }
+      .button-group { margin-top: 10px; }
       button { margin: 0 5px; padding: 10px 15px; cursor: pointer; }
-      #state-display { font-size: 24px; font-weight: bold; margin-top: 30px; color: #333; }
+      .display-board { margin-top: 40px; padding: 20px; border: 2px solid #ccc; border-radius: 8px; text-align: center; min-width: 300px; }
+      .display-item { font-size: 20px; font-weight: bold; margin: 10px 0; color: #333; }
     </style>
   </head>
   <body>
     <h1>Fenivo MVP Demonstration</h1>
     
-    <div class="button-group">
-      <button id="btn-curious">Curious</button>
-      <button id="btn-excited">Excited</button>
-      <button id="btn-thinking">Thinking</button>
-      <button id="btn-confident">Confident</button>
+    <div class="control-section">
+      <h3>Primary State</h3>
+      <div class="button-group">
+        <button id="btn-curious">Curious</button>
+        <button id="btn-excited">Excited</button>
+        <button id="btn-thinking">Thinking</button>
+        <button id="btn-confident">Confident</button>
+      </div>
     </div>
 
-    <div id="state-display">Current State: Curious</div>
+    <div class="control-section">
+      <h3>Secondary Expression</h3>
+      <div class="button-group">
+        <button id="btn-neutral">Neutral</button>
+        <button id="btn-smile">Smile</button>
+        <button id="btn-frown">Frown</button>
+        <button id="btn-wide-eyed">Wide-Eyed</button>
+      </div>
+    </div>
+
+    <div class="display-board">
+      <div id="state-display" class="display-item">State: --</div>
+      <div id="expression-display" class="display-item">Expression: --</div>
+    </div>
 
     <script type="module" src="/demo/main.js"></script>
   </body>
