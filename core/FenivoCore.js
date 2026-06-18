@@ -1,7 +1,7 @@
 /**
  * FenivoCore
  * The framework-agnostic core IP logic.
- * Handles primary emotional states and secondary expressions.
+ * Handles primary emotional states, secondary expressions, and underlying personality constraints.
  */
 export class FenivoCore {
   constructor() {
@@ -13,26 +13,38 @@ export class FenivoCore {
     this.validExpressions = ['Neutral', 'Smile', 'Frown', 'Wide-Eyed'];
     this.currentExpression = 'Neutral';
 
+    // Personality Profiles (Phase 3)
+    this.validPersonalities = ['Balanced', 'Grumpy', 'Bubbly'];
+    this.currentPersonality = 'Balanced';
+
     // Array to hold listener callbacks
     this.listeners = [];
   }
 
+  // --- Getters ---
+  getState() { return this.currentState; }
+  getExpression() { return this.currentExpression; }
+  getPersonality() { return this.currentPersonality; }
+
+  // --- Setters ---
+
   /**
-   * Returns the primary state.
+   * Updates the core personality and immediately evaluates if current expressions
+   * need to be overridden based on the new personality's rules.
+   * @param {string} newPersonality 
    */
-  getState() {
-    return this.currentState;
+  setPersonality(newPersonality) {
+    if (this.validPersonalities.includes(newPersonality)) {
+      this.currentPersonality = newPersonality;
+      this.evaluateConstraints(); 
+      this.notifyListeners();
+    } else {
+      console.warn(`[FenivoCore] Warning: '${newPersonality}' is not a valid personality.`);
+    }
   }
 
   /**
-   * Returns the secondary expression.
-   */
-  getExpression() {
-    return this.currentExpression;
-  }
-
-  /**
-   * Updates the primary state if valid, and notifies all listeners.
+   * Updates the primary state if valid.
    * @param {string} newState 
    */
   setState(newState) {
@@ -45,38 +57,61 @@ export class FenivoCore {
   }
 
   /**
-   * Updates the secondary expression if valid, and notifies all listeners.
+   * Updates the secondary expression if it passes personality conditional logic.
    * @param {string} newExpression 
    */
   setExpression(newExpression) {
-    if (this.validExpressions.includes(newExpression)) {
-      this.currentExpression = newExpression;
-      this.notifyListeners();
-    } else {
+    if (!this.validExpressions.includes(newExpression)) {
       console.warn(`[FenivoCore] Warning: '${newExpression}' is not a valid expression.`);
+      return;
+    }
+
+    // Conditional Logic: Reject changes that conflict with personality
+    if (this.currentPersonality === 'Grumpy' && newExpression === 'Smile') {
+      console.warn(`[FenivoCore] Blocked: A 'Grumpy' personality restricts the 'Smile' expression.`);
+      return;
+    }
+    
+    if (this.currentPersonality === 'Bubbly' && newExpression === 'Frown') {
+      console.warn(`[FenivoCore] Blocked: A 'Bubbly' personality restricts the 'Frown' expression.`);
+      return;
+    }
+
+    this.currentExpression = newExpression;
+    this.notifyListeners();
+  }
+
+  // --- Internal Logic ---
+
+  /**
+   * Ensures the current state/expression remains valid if the personality changes abruptly.
+   */
+  evaluateConstraints() {
+    if (this.currentPersonality === 'Grumpy' && this.currentExpression === 'Smile') {
+      this.currentExpression = 'Neutral'; // Wipe the smile
+    }
+    if (this.currentPersonality === 'Bubbly' && this.currentExpression === 'Frown') {
+      this.currentExpression = 'Neutral'; // Wipe the frown
     }
   }
 
-  /**
-   * Allows external modules (like the UI) to subscribe to state changes.
-   * @param {function} callback 
-   */
+  // --- Subscriber Pattern ---
+
   subscribe(callback) {
     this.listeners.push(callback);
-    // Immediately invoke the callback so the UI synchronizes upon subscription
+    // Immediately invoke so the UI synchronizes upon subscription
     callback({
       state: this.currentState,
-      expression: this.currentExpression
+      expression: this.currentExpression,
+      personality: this.currentPersonality
     });
   }
 
-  /**
-   * Triggers all subscribed callbacks with the complete current profile.
-   */
   notifyListeners() {
     const payload = {
       state: this.currentState,
-      expression: this.currentExpression
+      expression: this.currentExpression,
+      personality: this.currentPersonality
     };
     this.listeners.forEach(callback => callback(payload));
   }
