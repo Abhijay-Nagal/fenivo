@@ -1,5 +1,38 @@
 import { FenivoCore } from '../core/FenivoCore.js';
 
+// --- SVG INJECTION PIPELINE ---
+const modelContainer = document.getElementById('model-container');
+
+async function loadRuntimeSVG() {
+  try {
+    // Fetch the runtime asset from the public folder
+    const response = await fetch('/Aurora_Runtime.svg');
+    const svgText = await response.text();
+    
+    // Inject it into the container, replacing the loading text
+    modelContainer.innerHTML = svgText;
+    
+    // Ensure the injected SVG scales to fit our container cleanly
+    const svgElement = modelContainer.querySelector('svg');
+    if (svgElement) {
+      svgElement.style.width = '100%';
+      svgElement.style.height = '100%';
+    }
+    
+    console.log('[Fenivo] Aurora_Runtime.svg successfully injected.');
+    // We will call the initialization of our layer swapping here in Step 3
+    
+  } catch (error) {
+    console.error('[Fenivo] Failed to load runtime SVG:', error);
+    modelContainer.innerHTML = `<p style="color:red;">Error loading model.</p>`;
+  }
+}
+
+// Initialize the visual asset
+loadRuntimeSVG();
+
+// ... (Keep your existing FenivoCore instantiation and DOM listeners below this)
+
 // 1. Instantiate the Core IP
 const fenivo = new FenivoCore();
 

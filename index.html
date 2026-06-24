@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fenivo - Phase 3 Demo</title>
+    <title>Fenivo - Phase 2 Demo</title>
     <style>
       body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; margin-top: 50px; }
       .control-section { margin-top: 20px; text-align: center; }
@@ -11,11 +11,14 @@
       button { margin: 0 5px; padding: 10px 15px; cursor: pointer; }
       .display-board { margin-top: 40px; padding: 20px; border: 2px solid #ccc; border-radius: 8px; text-align: center; min-width: 300px; }
       .display-item { font-size: 20px; font-weight: bold; margin: 10px 0; color: #333; }
-      .personality-item { color: #0056b3; } /* Highlighting the base personality */
     </style>
   </head>
-  <body>
+<body>
     <h1>Fenivo MVP Demonstration</h1>
+
+    <div id="model-container" style="width: 400px; height: 400px; margin: 20px auto;">
+      <p id="loading-text">Loading Aurora...</p>
+    </div>
     
     <div class="control-section">
       <h3>Base Personality</h3>
